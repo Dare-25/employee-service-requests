@@ -1,29 +1,29 @@
 # Requirements: Employee Service Request System
 
 ## 1. Business context
-- **Simulated company:** [e.g. a mid-sized company with about 300 employees]
-- **Primary stakeholder:** [e.g. the head of shared services]
-- **Problem:** [one or two sentences: how are requests handled today, and what goes wrong?]
-- **Decision the system supports:** [e.g. where to add staff, and which requests are at risk of missing their deadline]
+- **Simulated company:** A mid-sized company with about 300 employees and three support teams: IT, HR and Facilities.
+- **Primary stakeholder:** The head of shared services, who is responsible for how quickly internal requests are resolved.
+- **Problem:** Employees send requests by email and chat, so requests get lost, nobody knows which team owns them, and managers cannot see which ones are overdue.
+- **Decision the system supports:** Which team needs more staff, and which open requests are at risk of missing their deadline.
 
 ## 2. Scope
-- **In scope:** requests for IT, HR and facilities; routing to the right team; status tracking; SLA deadlines; comments; dashboards; audit log.
-- **Out of scope:** [e.g. email notifications, file attachments, integration with real HR systems]
+- **In scope:** Requests for IT, HR and Facilities; automatic routing to the team for the category; status tracking; SLA deadlines and breach flags; comments; dashboard endpoints; audit log.
+- **Out of scope:** Email or chat notifications, file attachments, integration with real HR or IT systems, working-hours calendars, and support for more than one company.
 
 ## 3. User roles
 | Role | Can do |
 |---|---|
 | Employee | Create requests, view their own requests, add comments, cancel their own open requests |
-| Agent | View and work on requests for their team, change status, comment |
-| Admin | Everything above, plus view all requests, manage users and teams, view the audit log and the dashboard |
+| Agent | View and work on requests for their own team, change status, comment |
+| Admin | Everything above, plus view all requests, manage users and teams, read the dashboard and the audit log |
 
 ## 4. Functional requirements
 - Employees raise a request with a title, description, category (IT, HR or FACILITIES) and priority.
 - A request is routed to the team for its category.
-- Each priority has an SLA: the request gets a due date when it is created.
+- Each priority has an SLA, and the request gets a due date when it is created.
 - Agents move requests through OPEN, IN_PROGRESS, RESOLVED and CLOSED.
-- Requests past their due date are flagged as SLA breached.
-- A dashboard shows requests by status, by category, and how many breached their SLA.
+- Requests that pass their due date are flagged as SLA breached.
+- A dashboard shows requests by status and by category, and how many breached their SLA.
 - Every important action is written to the audit log.
 
 ## 5. Acceptance criteria (must be testable)
@@ -35,9 +35,14 @@
 6. Only admins can read the dashboard and the audit log.
 
 ## 6. Success metrics
-- [e.g. 100% of requests get a due date at creation]
-- [e.g. the dashboard shows the breach count that matches the data]
+- 100% of new requests receive a due date based on their priority at creation.
+- The number of breached requests on the dashboard equals the number of requests past their due date in the database.
+- 100% of status changes are recorded in the audit log.
 
 ## 7. Assumptions and limitations
-- [e.g. SLA is measured in calendar hours, not working hours]
-- [e.g. one team per category]
+- SLA deadlines are measured in calendar hours, not working hours: URGENT 4 hours, HIGH 8 hours, MEDIUM 24 hours, LOW 72 hours.
+- There is one team per category, and each agent belongs to one team.
+- A request counts as breached if it was resolved after its due date, or if it is still unresolved and past its due date.
+- Anyone who registers becomes an Employee; Agent and Admin accounts are created by an Admin.
+- Employees can cancel their own request while it is OPEN; a RESOLVED request can be reopened to IN_PROGRESS or closed.
+- Priority and category cannot be changed after a request is created.
