@@ -1,0 +1,52 @@
+Table teams {
+  id integer [pk, increment]
+  name varchar [unique, not null]
+  category varchar [unique, not null, note: 'IT, HR, FACILITIES']
+}
+
+Table users {
+  id integer [pk, increment]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  full_name varchar [not null]
+  role varchar [not null, note: 'EMPLOYEE, AGENT, ADMIN']
+  team_id integer [ref: >? teams.id, note: 'only set for agents']
+  created_at timestamp [not null]
+}
+
+Table sla_policies {
+  priority varchar [pk, note: 'URGENT, HIGH, MEDIUM, LOW']
+  hours integer [not null]
+}
+
+Table requests {
+  id integer [pk, increment]
+  requester_id integer [not null, ref: > users.id]
+  team_id integer [not null, ref: > teams.id]
+  assignee_id integer [ref: >? users.id]
+  title varchar [not null]
+  description text [not null]
+  category varchar [not null, note: 'IT, HR, FACILITIES']
+  priority varchar [not null, ref: > sla_policies.priority]
+  status varchar [not null, note: 'OPEN, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED']
+  due_at timestamp [not null]
+  resolved_at timestamp
+  created_at timestamp [not null]
+}
+
+Table comments {
+  id integer [pk, increment]
+  request_id integer [not null, ref: > requests.id]
+  author_id integer [not null, ref: > users.id]
+  body text [not null]
+  created_at timestamp [not null]
+}
+
+Table audit_logs {
+  id integer [pk, increment]
+  actor_id integer [not null, ref: > users.id]
+  action varchar [not null]
+  entity varchar [not null]
+  entity_id integer
+  created_at timestamp [not null]
+}
