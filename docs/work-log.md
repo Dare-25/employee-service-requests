@@ -8,4 +8,5 @@
 - Pushed the project structure to GitHub.
 - Wrote the requirements document: stakeholder, scope, three roles (Employee, Agent, Admin), SLA rules and six acceptance criteria.
 - Confirmed the esr-db container is healthy and accepts connections on port 5433.
+-wrote and ran the first migration with seed data
 - Next: draw the ER diagram, write the first migration, then build requests, routing, status flow, SLA tracking and the dashboard.
