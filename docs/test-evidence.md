@@ -12,6 +12,7 @@ Tests were run on 2026-11-23 and 2026-11-24 against the local API (Express on ht
 | IT agent lists requests | Sees request 1 (IT team) | Pass |
 | Admin lists requests | Sees request 1 | Pass |
 | Alice creates an HR request with priority URGENT | 201, team_id 2 (Human Resources), due_at 4 hours after created_at (criterion 2) | Pass |
+| Alice creates a FACILITIES request with priority LOW | 201, team_id 3 (Facilities), due_at 72 hours after created_at | Pass |
 
 ## 2. Status flow
 | Check | Expected | Result |
@@ -45,3 +46,19 @@ The deadline of request 2 was moved one hour into the past directly in the datab
 |---|---|---|
 | IT agent opens an HR request | 403 Forbidden | Pass |
 | IT agent lists requests | Only the IT request (id 1) is shown | Pass |
+
+## 6. Comments
+| Check | Expected | Result |
+|---|---|---|
+| Alice comments on her own open request | 201, comment returned | Pass |
+| Bob (another employee) comments on Alice's request | 403 Forbidden | Pass |
+| Alice sends an empty comment | 400 "body must be 1 to 2000 characters" | Pass |
+| Alice comments on a CLOSED request | 409 "Cannot comment on a CLOSED request" | Pass |
+
+## 7. Cancelling requests
+| Check | Expected | Result |
+|---|---|---|
+| Bob (another employee) cancels Alice's request | 403 Forbidden | Pass |
+| Alice cancels her own OPEN request | Status CANCELLED | Pass |
+| Alice cancels the same request again | 409 "Cannot cancel a request that is CANCELLED" | Pass |
+| Admin tries to move a CANCELLED request to IN_PROGRESS | 409 "Cannot change status from CANCELLED to IN_PROGRESS" | Pass |
