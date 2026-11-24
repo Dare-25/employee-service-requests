@@ -13,6 +13,8 @@ Tests were run on 2026-11-23 and 2026-11-24 against the local API (Express on ht
 | Admin lists requests | Sees request 1 | Pass |
 | Alice creates an HR request with priority URGENT | 201, team_id 2 (Human Resources), due_at 4 hours after created_at (criterion 2) | Pass |
 | Alice creates a FACILITIES request with priority LOW | 201, team_id 3 (Facilities), due_at 72 hours after created_at | Pass |
+| Alice creates a request with a too-short title, an unknown category and an unknown priority | 400 "Validation failed" with a list of problems | Pass |
+| An agent tries to create a request | 403 Forbidden | Pass |
 
 ## 2. Status flow
 | Check | Expected | Result |
@@ -33,6 +35,7 @@ Tests were run on 2026-11-23 and 2026-11-24 against the local API (Express on ht
 | Admin reads the dashboard with one closed IT request | total 1, active 0, sla_breached 0, counts by status, category and team match | Pass |
 | Alice (employee) reads the dashboard | 403 Forbidden (criterion 6) | Pass |
 | Admin reads the dashboard with one closed IT request and one overdue open HR request | total 2, active 1, sla_breached 1 | Pass |
+| Admin reads the audit log after a comment and a cancellation | COMMENT_ADDED and REQUEST_STATUS_CANCELLED recorded with Alice as actor | Pass |
 
 ## 4. SLA breach
 The deadline of request 2 was moved one hour into the past directly in the database (`UPDATE requests SET due_at = NOW() - interval '1 hour'`) to simulate time passing, since waiting for a real deadline was not practical.
@@ -62,3 +65,10 @@ The deadline of request 2 was moved one hour into the past directly in the datab
 | Alice cancels her own OPEN request | Status CANCELLED | Pass |
 | Alice cancels the same request again | 409 "Cannot cancel a request that is CANCELLED" | Pass |
 | Admin tries to move a CANCELLED request to IN_PROGRESS | 409 "Cannot change status from CANCELLED to IN_PROGRESS" | Pass |
+
+## 8. Invalid input
+| Check | Expected | Result |
+|---|---|---|
+| Admin opens an unknown request id (9999) | 404 "Request not found" | Pass |
+| Admin opens a non-numeric request id (abc) | 400 "Invalid request id" | Pass |
+| Agent sends an invalid status value (FLYING) | 400 "Invalid status" | Pass |
