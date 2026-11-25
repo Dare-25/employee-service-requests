@@ -96,6 +96,22 @@ Send the token as `Authorization: Bearer <token>`.
 
 ## Documentation and evidence
 
+## Running the tests
+
+The automated tests use Jest and Supertest and run against a separate database, `esr_test`, so they never touch the development data. Create it once:
+
+```powershell
+docker exec -it esr-db psql -U esr_user -d esr_requests -c "CREATE DATABASE esr_test;"
+Get-Content db\migrations\001_init.sql | docker exec -i esr-db psql -U esr_user -d esr_test
+```
+
+Then, from `apps\api`:
+
+```powershell
+npm test
+```
+
+The 35 tests cover authentication, request creation and routing, SLA deadlines and breach flags, who can see which requests, the status flow, cancellation, comments, the audit log and the dashboard. The suite refuses to run if it is not connected to `esr_test`.
 - `docs/requirements.md`: stakeholder, scope, roles, SLA rules and acceptance criteria
 - `docs/erd.png` and `docs/schema.dbml`: data model
 - `docs/design-notes.md`: design reasoning
@@ -105,7 +121,7 @@ Send the token as `Authorization: Bearer <token>`.
 ## Limitations and next steps
 
 - **No frontend.** Everything was tested through the API with PowerShell. Next step: a small React interface.
-- **No automated test suite.** Checks were run manually and recorded in `docs/test-evidence.md`. Next step: Jest and Supertest tests.
+- **The automated tests cover the API only.** They simulate time passing by moving a request's due date into the past in the test database. There are no tests for the frontend (there is none yet) or for several requests arriving at the same moment.
 - **The SLA breach was tested by simulation:** a request's due date was moved into the past directly in the database, because waiting for a real deadline was not practical.
 - **SLA time is measured in calendar hours,** not working hours.
 - **No notifications,** no file attachments, no reassignment of a request to another agent, and priority and category cannot be changed after creation.

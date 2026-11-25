@@ -1,6 +1,6 @@
 # Test Evidence
 
-Tests were run on 2026-11-23 and 2026-11-24 against the local API (Express on http://localhost:3000, PostgreSQL 16 in Docker on port 5433), using PowerShell `Invoke-RestMethod`. Test accounts: two employees (Alice, Bob), one IT agent and one admin.
+Tests were run on 2026-11-23, 2026-11-24 and 2026-11-25" against the local API (Express on http://localhost:3000, PostgreSQL 16 in Docker on port 5433), using PowerShell `Invoke-RestMethod`. Test accounts: two employees (Alice, Bob), one IT agent and one admin.
 
 ## 1. Requests: creation and routing
 | Check | Expected | Result |
@@ -72,3 +72,10 @@ The deadline of request 2 was moved one hour into the past directly in the datab
 | Admin opens an unknown request id (9999) | 404 "Request not found" | Pass |
 | Admin opens a non-numeric request id (abc) | 400 "Invalid request id" | Pass |
 | Agent sends an invalid status value (FLYING) | 400 "Invalid status" | Pass |
+
+## 9. Automated tests
+Jest and Supertest tests were added in `apps/api/tests/requests.test.js` and run against a separate test database (`esr_test`).
+
+| Check | Expected | Result |
+|---|---|---|
+| `npm test` (35 tests across authentication, creation and routing, visibility, status flow, cancellation, SLA breach, comments, audit log and dashboard) | All tests pass | 35 passed on 2026-11-25, and again on a second run |
