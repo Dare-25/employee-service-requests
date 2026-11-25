@@ -18,9 +18,9 @@
 - Created test accounts (two employees, an IT agent and an admin) and tested creation and routing, privacy between employees, team isolation for agents, the status flow, comments, cancellation and invalid input. Results are in docs/test-evidence.md.
 - Tested the SLA breach flag by moving a request's due date one hour into the past in the database to simulate time passing.
 - Wrote the design notes.
-- Next: README, a LinkedIn post, and then either automated tests or a small React frontend.
 
 ## 2026-11-25
 - Added automated tests with Jest and Supertest: split the app from the server (app.js and server.js), added a separate esr_test database so tests never touch real data, and wrote 35 tests covering the checks previously done by hand.
 - The test file was first empty because a terminal command was pasted into it instead of the code; replaced it with the full tests and all 35 passed, twice in a row.
 - Updated the README with how to run the tests.
+- Posted LinkedIn post 2:  https://lnkd.in/p/ekZUJRQf 
